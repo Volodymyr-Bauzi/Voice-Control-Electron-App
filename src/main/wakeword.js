@@ -1,6 +1,7 @@
 const { Porcupine } = require('@picovoice/porcupine-node');
 const { PvRecorder } = require('@picovoice/pvrecorder-node');
 const path = require('path');
+const fs = require('fs');
 
 // Default wake words provided by Porcupine
 const BUILT_IN_KEYWORDS = [

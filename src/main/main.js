@@ -12,7 +12,7 @@ const { InputSimulator } = require('./inputSimulator');
 const store = new Store({
   name: 'settings',
   defaults: {
-    wakeWord: 'Hey John',
+    wakeWord: 'Hey Flexi',
     voiceAppsFolder: null,
     sensitivity: 0.7,
     engineType: 'vosk', // 'vosk', 'whisper'
@@ -68,17 +68,32 @@ async function createWindow() {
     // Wait for command manager to be ready before creating the window
     await initializeCommandManager();
     
-    mainWindow = new BrowserWindow({
-      width: 900,
-      height: 700,
+    // Create the browser window
+    const windowOptions = {
+      width: 1200,
+      height: 800,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
         preload: path.join(__dirname, 'preload.js')
       },
-      icon: path.join(process.resourcesPath, 'icon.ico'),
       show: !store.get('startMinimized')
-    });
+    };
+  
+    // Set the window icon
+    try {
+      const iconPath = path.join(__dirname, '../../assets/icon.ico');
+      if (fs.existsSync(iconPath)) {
+        windowOptions.icon = iconPath;
+        console.log('Using custom window icon');
+      } else {
+        console.warn('Custom window icon not found at:', iconPath);
+      }
+    } catch (error) {
+      console.warn('Could not set window icon:', error);
+    }
+  
+    mainWindow = new BrowserWindow(windowOptions);
 
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
     
@@ -113,7 +128,17 @@ async function createWindow() {
 }
 
 function createTray() {
-  tray = new Tray(path.join(process.resourcesPath, 'icon.ico'));
+  // Path to the icon file
+  const iconPath = path.join(__dirname, '../../assets/icon.ico');
+  
+  try {
+    tray = new Tray(iconPath);
+    console.log('Tray created with custom icon');
+  } catch (error) {
+    console.error('Failed to create tray with custom icon, using no icon:', error);
+    // If that fails, create tray without an icon
+    tray = new Tray(process.execPath);
+  }
   const contextMenu = Menu.buildFromTemplate([
     { 
       label: 'Open Voice Commander', 

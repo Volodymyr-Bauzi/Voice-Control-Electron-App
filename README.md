@@ -5,7 +5,7 @@ A production-ready, standalone Electron-based desktop application with integrate
 ## Features
 
 ### 🔊 Wake Word Activation
-- Customizable wake word (e.g., "Hey John" instead of "Hey Google")
+- Customizable wake word (e.g., "Hey Flexi" instead of "Hey Google")
 - Passive background listening until activated by voice
 - Uses Porcupine by Picovoice for offline wake word detection
 

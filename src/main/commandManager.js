@@ -41,34 +41,47 @@ class CommandManager extends EventEmitter {
         const userDataPath = this.store.path.replace('settings.json', '');
         const dbPath = path.join(userDataPath, 'commands.db');
         
+        // Ensure the directory exists
+        if (!fs.existsSync(userDataPath)) {
+          fs.mkdirSync(userDataPath, { recursive: true });
+        }
+        
         console.log(`Opening database at: ${dbPath}`);
         this.db = new sqlite3(dbPath);
         
         // Enable WAL mode for better concurrency
         this.db.pragma('journal_mode = WAL');
+        this.db.pragma('synchronous = NORMAL');
         
         console.log('Creating tables if they do not exist...');
-        // Create commands table if it doesn't exist
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS commands (
-            id TEXT PRIMARY KEY,
-            phrase TEXT NOT NULL,
-            type TEXT NOT NULL,
-            action TEXT NOT NULL,
-            description TEXT,
-            created_at INTEGER
-          )
-        `);
         
-        // Create phonetic mappings table if it doesn't exist
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS phonetic_mappings (
-            word TEXT PRIMARY KEY,
-            phonetic TEXT NOT NULL
-          )
-        `);
+        // Use transactions for better performance and atomicity
+        const transaction = this.db.transaction(() => {
+          // Create commands table if it doesn't exist
+          this.db.prepare(`
+            CREATE TABLE IF NOT EXISTS commands (
+              id TEXT PRIMARY KEY,
+              phrase TEXT NOT NULL,
+              type TEXT NOT NULL,
+              action TEXT NOT NULL,
+              description TEXT,
+              created_at INTEGER
+            )
+          `).run();
+          
+          // Create phonetic mappings table if it doesn't exist
+          this.db.prepare(`
+            CREATE TABLE IF NOT EXISTS phonetic_mappings (
+              word TEXT PRIMARY KEY,
+              phonetic TEXT NOT NULL
+            )
+          `).run();
+          
+          console.log('Database initialization complete');
+        });
         
-        console.log('Database initialization complete');
+        // Execute the transaction
+        transaction();
         resolve();
       } catch (error) {
         console.error('Error initializing database:', error);
@@ -79,30 +92,25 @@ class CommandManager extends EventEmitter {
   
   _loadCommands() {
     return new Promise((resolve, reject) => {
-      this.db.all(`SELECT * FROM commands`, [], (err, rows) => {
-        if (err) {
-          console.error('Failed to load commands:', err);
-          reject(err);
-          return;
-        }
+      try {
+        const stmt = this.db.prepare('SELECT * FROM commands');
+        const rows = stmt.all();
         
-        try {
-          this.commands = rows.map(row => ({
-            id: row.id,
-            phrase: row.phrase,
-            type: row.type,
-            action: row.action,
-            description: row.description,
-            createdAt: row.created_at
-          }));
-          
-          console.log(`Loaded ${this.commands.length} commands from database`);
-          resolve();
-        } catch (error) {
-          console.error('Error processing commands:', error);
-          reject(error);
-        }
-      });
+        this.commands = rows.map(row => ({
+          id: row.id,
+          phrase: row.phrase,
+          type: row.type,
+          action: row.action,
+          description: row.description,
+          createdAt: row.created_at
+        }));
+        
+        console.log(`Loaded ${this.commands.length} commands from database`);
+        resolve();
+      } catch (error) {
+        console.error('Error loading commands:', error);
+        reject(error);
+      }
     });
   }
   
