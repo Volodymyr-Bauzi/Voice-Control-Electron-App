@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+import { ipcRenderer } from 'electron';
 
 export const api = {
   // Commands
@@ -21,6 +21,10 @@ export const api = {
   
   // File dialogs
   showOpenDialog: (options) => ipcRenderer.invoke('show-open-dialog', options),
+  
+  // Phonetics
+  addPhonetic: (word, phonetic) => ipcRenderer.invoke('add-phonetic', { word, phonetic }),
+  deletePhonetic: (word) => ipcRenderer.invoke('delete-phonetic', word),
   
   // Events
   onWakeWordDetected: (callback) => {

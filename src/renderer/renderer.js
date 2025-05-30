@@ -1,5 +1,6 @@
 // Core Imports
 import { voiceService } from './services/voiceService.js';
+import { api } from './services/api.js';
 
 // Component Imports
 import { CommandList } from './components/commands/CommandList.js';
@@ -56,13 +57,13 @@ class VoiceControlApp {
   async loadInitialData() {
     try {
       this.updateStatus('loading', 'Loading settings...');
-      this.state.settings = await window.api.getSettings();
+      this.state.settings = await api.getSettings();
       
       this.updateStatus('loading', 'Loading commands...');
-      this.state.commands = await window.api.getCommands();
+      this.state.commands = await api.getCommands();
       
       this.updateStatus('loading', 'Loading phonetics...');
-      this.state.phonetics = await window.api.getPhonetics();
+      this.state.phonetics = await api.getPhonetics();
       
       this.updateUI();
       this.updateStatus('ready', 'Ready');
@@ -119,7 +120,7 @@ class VoiceControlApp {
     // Settings form
     this.settingsForm.setOnSave(async (settings) => {
       try {
-        await window.api.saveSettings(settings);
+        await api.saveSettings(settings);
         this.state.settings = settings;
         this.updateStatus('success', 'Settings saved');
       } catch (error) {
@@ -131,7 +132,7 @@ class VoiceControlApp {
     // Phonetics manager
     this.phoneticsManager.setOnAdd(async (word, phonetic) => {
       try {
-        await window.api.addPhonetic(word, phonetic);
+        await api.addPhonetic(word, phonetic);
         this.state.phonetics[word] = phonetic;
         this.phoneticsManager.updatePhoneticsList(this.state.phonetics);
         this.updateStatus('success', 'Phonetic added');
@@ -143,7 +144,7 @@ class VoiceControlApp {
 
     this.phoneticsManager.setOnDelete(async (word) => {
       try {
-        await window.api.deletePhonetic(word);
+        await api.deletePhonetic(word);
         delete this.state.phonetics[word];
         this.phoneticsManager.updatePhoneticsList(this.state.phonetics);
         this.updateStatus('success', 'Phonetic removed');
@@ -156,7 +157,7 @@ class VoiceControlApp {
     // Command modal
     this.commandModal.setOnSave(async (command) => {
       try {
-        await window.api.saveCommand(command);
+        await api.saveCommand(command);
         await this.loadInitialData();
         this.updateStatus('success', 'Command saved');
       } catch (error) {
@@ -170,7 +171,7 @@ class VoiceControlApp {
       list.setOnEdit((command) => this.commandModal.open(command));
       list.setOnDelete(async (commandId) => {
         try {
-          await window.api.deleteCommand(commandId);
+          await api.deleteCommand(commandId);
           await this.loadInitialData();
           this.updateStatus('success', 'Command deleted');
         } catch (error) {
