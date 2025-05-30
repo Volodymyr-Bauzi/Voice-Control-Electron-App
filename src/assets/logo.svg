@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#4A6CF7" opacity="0.1"/>
+  
+  <!-- Microphone Body -->
+  <rect x="216" y="96" width="80" height="160" rx="40" fill="#4A6CF7"/>
+  
+  <!-- Microphone Stand -->
+  <rect x="246" y="256" width="20" height="80" fill="#4A6CF7"/>
+  
+  <!-- Microphone Base -->
+  <rect x="176" y="336" width="160" height="16" rx="8" fill="#4A6CF7"/>
+  
+  <!-- Sound Waves -->
+  <path d="M144 192C144 139.6 186.6 96 240 96H272C325.4 96 368 139.6 368 192" stroke="#4A6CF7" stroke-width="16" stroke-linecap="round"/>
+  <path d="M176 192C176 156.8 204.8 128 240 128H272C307.2 128 336 156.8 336 192" stroke="#4A6CF7" stroke-width="16" stroke-linecap="round"/>
+  
+  <!-- Voice Command Indicator -->
+  <circle cx="256" cy="416" r="16" fill="#4A6CF7"/>
+  <path d="M216 416H296" stroke="#4A6CF7" stroke-width="8" stroke-linecap="round"/>
+</svg>

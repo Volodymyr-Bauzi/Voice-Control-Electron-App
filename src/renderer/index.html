@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Commander</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo">
+        <img src="../assets/logo.svg" alt="Voice Commander Logo" id="logo-img">
+        <h1>Voice Commander</h1>
+      </div>
+      <div class="status-indicator">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Initializing...</span>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <section class="recognition-section">
+        <div class="wake-word-container">
+          <h2>Wake Word</h2>
+          <div class="wake-word-display">
+            <span id="wake-word-text">Hey John</span>
+            <button id="edit-wake-word-btn" class="icon-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="recognition-display">
+          <h2>Recognition</h2>
+          <div class="recognition-box">
+            <p id="recognition-text">Say "<span id="wake-word-display">Hey John</span>" to activate</p>
+          </div>
+        </div>
+
+        <div class="manual-controls">
+          <button id="listen-btn" class="primary-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            Start Listening
+          </button>
+          <button id="stop-btn" class="secondary-button" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
+            </svg>
+            Stop
+          </button>
+        </div>
+      </section>
+
+      <section class="commands-section">
+        <div class="section-header">
+          <h2>Voice Commands</h2>
+          <button id="add-command-btn" class="icon-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Command
+          </button>
+        </div>
+
+        <div class="commands-list" id="commands-list">
+          <!-- Commands will be populated here dynamically -->
+          <div class="empty-state">
+            <p>No commands configured yet</p>
+            <button id="add-default-commands-btn" class="text-button">Add Default Commands</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="voice-apps-section">
+        <div class="section-header">
+          <h2>Voice Apps Folder</h2>
+          <button id="select-folder-btn" class="icon-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Select Folder
+          </button>
+        </div>
+
+        <div class="folder-display">
+          <p id="folder-path">No folder selected</p>
+        </div>
+      </section>
+    </main>
+
+    <aside class="app-sidebar">
+      <nav class="sidebar-nav">
+        <button class="nav-button active" data-tab="commands">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          Commands
+        </button>
+        <button class="nav-button" data-tab="settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </button>
+        <button class="nav-button" data-tab="phonetics">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          Phonetics
+        </button>
+        <button class="nav-button" data-tab="about">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          About
+        </button>
+      </nav>
+
+      <div class="tab-content" id="commands-tab">
+        <!-- Content for Commands tab -->
+        <div class="tab-section">
+          <h3>System Commands</h3>
+          <ul class="command-list" id="system-commands">
+            <!-- System commands will be populated here -->
+          </ul>
+        </div>
+
+        <div class="tab-section">
+          <h3>Application Commands</h3>
+          <ul class="command-list" id="app-commands">
+            <!-- App commands will be populated here -->
+          </ul>
+        </div>
+
+        <div class="tab-section">
+          <h3>Keyboard Commands</h3>
+          <ul class="command-list" id="keyboard-commands">
+            <!-- Keyboard commands will be populated here -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="settings-tab">
+        <!-- Content for Settings tab -->
+        <div class="settings-form">
+          <div class="form-group">
+            <label for="wake-word-input">Wake Word</label>
+            <input type="text" id="wake-word-input" placeholder="Hey John">
+          </div>
+
+          <div class="form-group">
+            <label for="sensitivity-slider">Wake Word Sensitivity</label>
+            <input type="range" id="sensitivity-slider" min="0" max="1" step="0.1" value="0.7">
+            <div class="slider-labels">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="engine-select">Recognition Engine</label>
+            <select id="engine-select">
+              <option value="vosk">Vosk (Offline)</option>
+              <option value="whisper">Whisper (Offline)</option>
+            </select>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="start-minimized">
+            <label for="start-minimized">Start Minimized</label>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="start-at-login">
+            <label for="start-at-login">Start at Login</label>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="show-notifications">
+            <label for="show-notifications">Show Notifications</label>
+          </div>
+
+          <button id="save-settings-btn" class="primary-button">Save Settings</button>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="phonetics-tab">
+        <!-- Content for Phonetics tab -->
+        <div class="phonetics-section">
+          <h3>Custom Pronunciation Mappings</h3>
+          <p class="description">Add custom pronunciations to improve recognition for difficult words or names.</p>
+
+          <div class="phonetic-form">
+            <div class="form-group">
+              <label for="word-input">Word or Phrase</label>
+              <input type="text" id="word-input" placeholder="e.g., Spotify">
+            </div>
+
+            <div class="form-group">
+              <label for="phonetic-input">Phonetic Spelling</label>
+              <input type="text" id="phonetic-input" placeholder="e.g., S P AH T AH F AY">
+              <small>Use phonetic symbols to represent pronunciation</small>
+            </div>
+
+            <button id="add-phonetic-btn" class="primary-button">Add Mapping</button>
+          </div>
+
+          <div class="phonetics-list" id="phonetics-list">
+            <!-- Phonetic mappings will be populated here -->
+            <div class="empty-state">
+              <p>No custom pronunciations added yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="about-tab">
+        <!-- Content for About tab -->
+        <div class="about-content">
+          <h3>Voice Commander</h3>
+          <p class="version">Version 1.0.0</p>
+          <p>A voice-controlled desktop assistant with wake word activation and command mapping.</p>
+
+          <h4>Features</h4>
+          <ul>
+            <li>Wake word activation</li>
+            <li>Voice command recognition</li>
+            <li>Application launching</li>
+            <li>Keyboard simulation</li>
+            <li>Custom pronunciation mappings</li>
+          </ul>
+
+          <h4>Credits</h4>
+          <p>Built with Electron, Node.js, Vosk, and Porcupine.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Modals -->
+    <div class="modal" id="add-command-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add Voice Command</h3>
+          <button class="close-button" id="close-command-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="command-phrase">Voice Command</label>
+            <input type="text" id="command-phrase" placeholder="e.g., open browser">
+          </div>
+
+          <div class="form-group">
+            <label for="command-type">Command Type</label>
+            <select id="command-type">
+              <option value="app">Application/File</option>
+              <option value="keyboard">Keyboard Shortcut</option>
+              <option value="system">System Command</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="app-action-group">
+            <label for="app-path">Application Path</label>
+            <div class="input-with-button">
+              <input type="text" id="app-path" placeholder="Path to application or file">
+              <button id="browse-app-btn" class="icon-button">Browse</button>
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="keyboard-action-group">
+            <label for="keyboard-action">Keyboard Action</label>
+            <select id="keyboard-action">
+              <option value="space">Space (Play/Pause)</option>
+              <option value="volumeUp">Volume Up</option>
+              <option value="volumeDown">Volume Down</option>
+              <option value="mute">Mute</option>
+              <option value="up">Up Arrow</option>
+              <option value="down">Down Arrow</option>
+              <option value="left">Left Arrow</option>
+              <option value="right">Right Arrow</option>
+              <option value="enter">Enter</option>
+              <option value="escape">Escape</option>
+              <option value="refresh">Refresh (Ctrl+R)</option>
+              <option value="copy">Copy (Ctrl+C)</option>
+              <option value="paste">Paste (Ctrl+V)</option>
+              <option value="save">Save (Ctrl+S)</option>
+            </select>
+          </div>
+
+          <div class="form-group hidden" id="system-action-group">
+            <label for="system-action">System Action</label>
+            <select id="system-action">
+              <option value="quit">Quit Application</option>
+              <option value="minimize">Minimize Window</option>
+              <option value="show">Show Window</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="command-description">Description (Optional)</label>
+            <input type="text" id="command-description" placeholder="Brief description of what this command does">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancel-command-btn" class="secondary-button">Cancel</button>
+          <button id="save-command-btn" class="primary-button">Save Command</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

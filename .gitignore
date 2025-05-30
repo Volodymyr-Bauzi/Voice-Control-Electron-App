@@ -1,0 +1,43 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+
+# Electron-builder cache
+.electron-builder/
+
+# Vosk models (these are large and should be downloaded by the user)
+resources/models/vosk/*
+!resources/models/vosk/README.txt
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# SQLite database files
+*.db
+*.sqlite

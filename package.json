@@ -1,0 +1,70 @@
+{
+  "name": "voice-commander",
+  "version": "1.0.0",
+  "description": "Voice-controlled desktop assistant with wake word activation and command mapping",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build:dir": "electron-builder --win dir",
+    "postinstall": "electron-builder install-app-deps && electron-rebuild -v 16.2.0 -f -w ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@picovoice/porcupine-node": "^3.0.1",
+    "@picovoice/pvrecorder-node": "^1.2.1",
+    "better-sqlite3": "^11.10.0",
+    "electron-store": "^8.1.0",
+    "node-addon-api": "^7.0.0",
+    "node-gyp": "^9.4.0",
+    "node-vad": "^1.1.4",
+    "robotjs": "^0.6.0",
+    "sql.js": "^1.13.0",
+    "uuid": "^11.1.0",
+    "vosk": "^0.3.39"
+  },
+  "devDependencies": {
+    "electron": "^16.2.0",
+    "electron-builder": "^24.1.1",
+    "electron-rebuild": "^3.2.9"
+  },
+  "resolutions": {
+    "node-abi": "^3.35.0"
+  },
+  "build": {
+    "appId": "com.voice.commander",
+    "productName": "Voice Commander",
+    "files": [
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "resources",
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "resources/icon.ico"
+    },
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/@picovoice/**/*",
+      "node_modules/vosk/**/*",
+      "node_modules/robotjs/**/*",
+      "resources/models/**/*"
+    ]
+  }
+}

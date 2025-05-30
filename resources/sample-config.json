@@ -1,0 +1,71 @@
+{
+  "commands": [
+    {
+      "phrase": "open browser",
+      "type": "app",
+      "action": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "description": "Opens Google Chrome browser"
+    },
+    {
+      "phrase": "open notepad",
+      "type": "app",
+      "action": "notepad.exe",
+      "description": "Opens Windows Notepad"
+    },
+    {
+      "phrase": "play music",
+      "type": "app",
+      "action": "C:\\Program Files\\WindowsApps\\SpotifyAB.SpotifyMusic_1.207.1277.0_x86__zpdnekdrzrea0\\Spotify.exe",
+      "description": "Opens Spotify"
+    },
+    {
+      "phrase": "pause video",
+      "type": "keyboard",
+      "action": "space",
+      "description": "Presses spacebar to pause/play videos"
+    },
+    {
+      "phrase": "volume up",
+      "type": "keyboard",
+      "action": "volumeUp",
+      "description": "Increases system volume"
+    },
+    {
+      "phrase": "volume down",
+      "type": "keyboard",
+      "action": "volumeDown",
+      "description": "Decreases system volume"
+    },
+    {
+      "phrase": "mute",
+      "type": "keyboard",
+      "action": "mute",
+      "description": "Mutes/unmutes system audio"
+    },
+    {
+      "phrase": "scroll down",
+      "type": "keyboard",
+      "action": "down",
+      "description": "Presses down arrow key"
+    },
+    {
+      "phrase": "scroll up",
+      "type": "keyboard",
+      "action": "up",
+      "description": "Presses up arrow key"
+    },
+    {
+      "phrase": "quit application",
+      "type": "system",
+      "action": "quit",
+      "description": "Quits Voice Commander"
+    }
+  ],
+  "phoneticMappings": {
+    "spotify": "S P AH T AH F AY",
+    "chrome": "K R OH M",
+    "youtube": "Y UW T UW B",
+    "volume": "V AA L Y UW M",
+    "pause": "P AO Z"
+  }
+}
