@@ -48,16 +48,31 @@ class VoiceRecognizer {
   }
   
   async _initializeVosk() {
+
+    const possibleModelPaths = [
+      // Development path (relative to project root)
+      path.join(__dirname, './resources/models/vosk/vosk-model-small-en-us-0.15'),
+      // Production path (when packaged)
+      path.join(process.resourcesPath, 'resources/models/vosk/vosk-model-small-en-us-0.15'),
+      // Another possible production path
+      path.join(process.resourcesPath, 'models/vosk/vosk-model-small-en-us-0.15')
+    ];
+
     // Set up Vosk model path
-    const modelPath = path.join(
-      process.resourcesPath,
-      'models',
-      'vosk',
-      'vosk-model-small-en-us-0.15'
-    );
+    let modelPath = null
+
+    for (const possiblePath of possibleModelPaths) {
+      if (fs.existsSync(possiblePath)) {
+        modelPath = possiblePath;
+        console.log('Found Vosk model at:', modelPath);
+        break;
+      } else {
+        console.log('Vosk model not found at:', possiblePath);
+      }
+    }
     
     // Check if model exists
-    if (!fs.existsSync(modelPath)) {
+    if (!modelPath || !fs.existsSync(modelPath)) {
       throw new Error(`Vosk model not found at: ${modelPath}`);
     }
     

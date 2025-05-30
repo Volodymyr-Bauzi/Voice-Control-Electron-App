@@ -12,9 +12,9 @@ const { InputSimulator } = require('./inputSimulator');
 const store = new Store({
   name: 'settings',
   defaults: {
-    wakeWord: 'Hey Flexi',
+    wakeWord: 'bumblebee',  // Using custom wake word 'hey flexi' (lowercase for consistency)
     voiceAppsFolder: null,
-    sensitivity: 0.7,
+    sensitivity: 0.5,  // Lower sensitivity for better detection
     engineType: 'vosk', // 'vosk', 'whisper'
     showNotifications: true,
     startMinimized: false,
@@ -22,6 +22,10 @@ const store = new Store({
     customPhonetics: {}
   }
 });
+
+// Clear any cached settings and reset to defaults
+store.clear();
+console.log('Store cleared and reset to defaults');
 
 // Global references
 let mainWindow;

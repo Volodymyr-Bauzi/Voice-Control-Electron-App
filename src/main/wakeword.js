@@ -2,11 +2,21 @@ const { Porcupine } = require('@picovoice/porcupine-node');
 const { PvRecorder } = require('@picovoice/pvrecorder-node');
 const path = require('path');
 const fs = require('fs');
+const { app } = require('electron');
 
+const isPackaged = app ? app.isPackaged : false;
 // Default wake words provided by Porcupine
+// Built-in keywords - we'll prioritize using custom wake word files
 const BUILT_IN_KEYWORDS = [
-  'alexa', 'computer', 'hey google', 'hey siri', 'jarvis', 
-  'ok google', 'picovoice', 'porcupine', 'bumblebee'
+  { name: 'bumblebee', file: 'bumblebee_windows.ppn' },
+  { name: 'hey flexi', file: 'Hey_Flexi_windows.ppn' },
+  { name: 'alexa', file: 'alexa_windows.ppn' },
+  { name: 'computer', file: 'computer_windows.ppn' },
+  { name: 'hey google', file: 'hey google_windows.ppn' },
+  { name: 'hey siri', file: 'hey siri_windows.ppn' },
+  { name: 'jarvis', file: 'jarvis_windows.ppn' },
+  { name: 'ok google', file: 'ok google_windows.ppn' },
+  { name: 'picovoice', file: 'picovoice_windows.ppn' },
 ];
 
 class WakeWordDetector {
@@ -20,41 +30,48 @@ class WakeWordDetector {
 
   async initialize() {
     try {
-      // Get the appropriate keyword based on user's choice
-      let keywordPath = null;
-      let keywordIndex = BUILT_IN_KEYWORDS.indexOf(this.options.wakeWord.toLowerCase());
-      
-      if (keywordIndex === -1) {
-        // If not a built-in keyword, try to load a custom keyword file
-        // This would require the user to create a custom keyword using Picovoice Console
-        const customKeywordPath = path.join(
-          process.resourcesPath, 
-          'models', 
-          'keywords', 
-          `${this.options.wakeWord.toLowerCase().replace(/\s+/g, '_')}_windows.ppn`
-        );
-        
-        if (fs.existsSync(customKeywordPath)) {
-          keywordPath = customKeywordPath;
-        } else {
-          // Fall back to a default keyword if custom one is not found
-          console.warn(`Custom wake word '${this.options.wakeWord}' not found, falling back to 'hey google'`);
-          keywordIndex = BUILT_IN_KEYWORDS.indexOf('hey google');
-        }
+      if (this.porcupine) {
+        return; // Already initialized
       }
       
-      // Create Porcupine instance
-      this.porcupine = keywordPath 
-        ? new Porcupine(
-            this._getAccessKey(), 
-            [keywordPath], 
-            [this.options.sensitivity]
-          )
-        : new Porcupine(
-            this._getAccessKey(), 
-            [keywordIndex], 
-            [this.options.sensitivity]
-          );
+      console.log('Initializing wake word detector with options:', this.options);
+      
+      // Use the built-in 'porcupine' keyword
+      console.log('Using built-in "porcupine" wake word');
+      
+      // Hardcode the index for 'porcupine' (should be 0 based on our BUILT_IN_KEYWORDS array)
+      const keywordName = this.options.wakeWord || 'porcupine';
+      const keywordFile = BUILT_IN_KEYWORDS.find(k => k.name.toLowerCase() === keywordName.toLowerCase())?.file;
+
+      if (!keywordFile) {
+        throw new Error(`Wake word '${keywordName}' not found in BUILT_IN_KEYWORDS list.`);
+      }
+
+      const baseDir = isPackaged
+        ? path.join(process.resourcesPath, 'models', 'keywords')
+        : path.join(__dirname, 'resources/models/keywords');
+
+      const keywordPath = path.join(baseDir, keywordFile);
+
+      if (!fs.existsSync(keywordPath)) {
+        console.error(`Wake word model not found at: ${keywordPath}`);
+        const dirContents = fs.readdirSync(path.dirname(keywordPath));
+        console.error('Available files:', dirContents);
+        throw new Error(`Missing keyword file: ${keywordFile}`);
+      }
+
+      try {
+        // Initialize Porcupine with the built-in keyword index
+        this.porcupine = new Porcupine(
+          this._getAccessKey(),
+          [keywordPath],
+          [this.options.sensitivity]
+        );        
+        console.log('Successfully initialized Porcupine with built-in keyword');
+      } catch (error) {
+        console.error('Failed to initialize Porcupine:', error);
+        throw new Error(`Failed to initialize wake word detection: ${error.message}`);
+      }
       
       // Initialize recorder
       this.recorder = new PvRecorder(
@@ -74,8 +91,16 @@ class WakeWordDetector {
   
   _getAccessKey() {
     // In a production app, you would store this securely
-    // For Picovoice, you can get a free access key for personal use
-    return process.env.PICOVOICE_ACCESS_KEY || 'your-access-key-here';
+    // Sign up at https://console.picovoice.ai/ to get a free access key
+    const accessKey = process.env.PICOVOICE_ACCESS_KEY || 'your-access-key-here';
+    
+    if (!accessKey || accessKey === 'your-access-key-here') {
+      console.error('ERROR: Please set your Picovoice access key in the PICOVOICE_ACCESS_KEY environment variable');
+      console.error('Get a free access key at: https://console.picovoice.ai/');
+      throw new Error('Picovoice access key not found. Please set the PICOVOICE_ACCESS_KEY environment variable.');
+    }
+    
+    return accessKey;
   }
   
   async start() {
